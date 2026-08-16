@@ -98,6 +98,8 @@ extern "C"
     return v8::Integer::New(__int)
 #define API_RETURN_LONG(__int)                                          \
     return v8::Number::New(__int)
+#define API_RETURN_LONGLONG(__int)                                      \
+    return v8::Number::New(__int)
 
 
 /*
@@ -4682,6 +4684,46 @@ API_FUNC(infolist_new_var_time)
     API_RETURN_STRING(result);
 }
 
+API_FUNC(infolist_new_var_long)
+{
+    long value;
+    const char *result;
+
+    API_INIT_FUNC(1, "infolist_new_var_long", "ssn", API_RETURN_EMPTY);
+
+    v8::String::Utf8Value item(args[0]);
+    v8::String::Utf8Value name(args[1]);
+    value = args[2]->IntegerValue();
+
+    result = API_PTR2STR(
+        weechat_infolist_new_var_long (
+            (struct t_infolist_item *)API_STR2PTR(*item),
+            *name,
+            value));
+
+    API_RETURN_STRING(result);
+}
+
+API_FUNC(infolist_new_var_longlong)
+{
+    long long value;
+    const char *result;
+
+    API_INIT_FUNC(1, "infolist_new_var_longlong", "ssn", API_RETURN_EMPTY);
+
+    v8::String::Utf8Value item(args[0]);
+    v8::String::Utf8Value name(args[1]);
+    value = args[2]->IntegerValue();
+
+    result = API_PTR2STR(
+        weechat_infolist_new_var_longlong (
+            (struct t_infolist_item *)API_STR2PTR(*item),
+            *name,
+            value));
+
+    API_RETURN_STRING(result);
+}
+
 API_FUNC(infolist_search_var)
 {
     const char *result;
@@ -4835,6 +4877,38 @@ API_FUNC(infolist_time)
         *variable);
 
     API_RETURN_LONG(time);
+}
+
+API_FUNC(infolist_long)
+{
+    long value;
+
+    API_INIT_FUNC(1, "infolist_long", "ss", API_RETURN_LONG(0));
+
+    v8::String::Utf8Value infolist(args[0]);
+    v8::String::Utf8Value variable(args[1]);
+
+    value = weechat_infolist_long (
+        (struct t_infolist *)API_STR2PTR(*infolist),
+        *variable);
+
+    API_RETURN_LONG(value);
+}
+
+API_FUNC(infolist_longlong)
+{
+    long long value;
+
+    API_INIT_FUNC(1, "infolist_longlong", "ss", API_RETURN_LONGLONG(0));
+
+    v8::String::Utf8Value infolist(args[0]);
+    v8::String::Utf8Value variable(args[1]);
+
+    value = weechat_infolist_longlong (
+        (struct t_infolist *)API_STR2PTR(*infolist),
+        *variable);
+
+    API_RETURN_LONGLONG(value);
 }
 
 API_FUNC(infolist_free)
@@ -5106,7 +5180,7 @@ API_FUNC(hdata_longlong)
 {
     long long value;
 
-    API_INIT_FUNC(1, "hdata_longlong", "sss", API_RETURN_LONG(0));
+    API_INIT_FUNC(1, "hdata_longlong", "sss", API_RETURN_LONGLONG(0));
 
     v8::String::Utf8Value hdata(args[0]);
     v8::String::Utf8Value pointer(args[1]);
@@ -5117,7 +5191,7 @@ API_FUNC(hdata_longlong)
         API_STR2PTR(*pointer),
         *name);
 
-    API_RETURN_LONG(value);
+    API_RETURN_LONGLONG(value);
 }
 
 API_FUNC(hdata_string)
@@ -5576,6 +5650,8 @@ WeechatJsV8::loadLibs()
     API_DEF_FUNC(infolist_new_var_string);
     API_DEF_FUNC(infolist_new_var_pointer);
     API_DEF_FUNC(infolist_new_var_time);
+    API_DEF_FUNC(infolist_new_var_long);
+    API_DEF_FUNC(infolist_new_var_longlong);
     API_DEF_FUNC(infolist_search_var);
     API_DEF_FUNC(infolist_get);
     API_DEF_FUNC(infolist_next);
@@ -5586,6 +5662,8 @@ WeechatJsV8::loadLibs()
     API_DEF_FUNC(infolist_string);
     API_DEF_FUNC(infolist_pointer);
     API_DEF_FUNC(infolist_time);
+    API_DEF_FUNC(infolist_long);
+    API_DEF_FUNC(infolist_longlong);
     API_DEF_FUNC(infolist_free);
     API_DEF_FUNC(hdata_get);
     API_DEF_FUNC(hdata_get_var_offset);
